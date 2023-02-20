@@ -9,16 +9,33 @@ import sys
 from scipy.integrate import odeint, solve_ivp
 import scipy as sp
 import matplotlib.pyplot as plt
+from slider import Slider
 
 class MainWindow(QWidget):
     def __init__(self):
         super(MainWindow, self).__init__()
 
-        tab1MainLayout = QGridLayout()
+        positionGraph = self.createPositionGraph()
+        variableComboBox = self.createVariableComboBox()
         label = QLabel("hello")
-        tab1MainLayout.addWidget(label)
+
+        tab1MainLayout = QGridLayout()
+        tab1MainLayout.addWidget(positionGraph, 0, 0, 1, 6)
+        tab1MainLayout.addWidget(label, 1, 0)
+        tab1MainLayout.addWidget(variableComboBox, 1, 1, 1, 3)
         self.setLayout(tab1MainLayout)
 
+    def createPositionGraph(self):
+        graph = pg.plot()
+        graph.showGrid(x=True, y=True)
+        graph.setLabel('left', 'Vertical Position')
+        graph.setLabel('bottom', 'Horizontal Position')
+
+        return graph
+    
+    def createVariableComboBox(self):
+        testSlider = Slider(0.0, 5.0, "horizontal")
+        return testSlider
 
 
 app = QApplication(sys.argv)
