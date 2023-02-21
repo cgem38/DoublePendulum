@@ -10,6 +10,7 @@ from scipy.integrate import odeint, solve_ivp
 import scipy as sp
 import matplotlib.pyplot as plt
 from slider import Slider
+from kivy.properties import Clock
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -17,12 +18,12 @@ class MainWindow(QWidget):
 
         positionGraph = self.createPositionGraph()
         variableComboBox = self.createVariableComboBox()
-        label = QLabel("hello")
 
         tab1MainLayout = QGridLayout()
         tab1MainLayout.addWidget(positionGraph, 0, 0, 1, 6)
-        tab1MainLayout.addWidget(label, 1, 0)
-        tab1MainLayout.addWidget(variableComboBox, 1, 1, 1, 3)
+        tab1MainLayout.addWidget(variableComboBox, 1, 0, 1, 6)
+        tab1MainLayout.setRowStretch(0, 5)
+        tab1MainLayout.setRowStretch(1, 1)
         self.setLayout(tab1MainLayout)
 
     def createPositionGraph(self):
@@ -34,9 +35,45 @@ class MainWindow(QWidget):
         return graph
     
     def createVariableComboBox(self):
-        testSlider = Slider(0.0, 5.0, "horizontal")
-        return testSlider
+        Box = QGroupBox(title="Variables")
 
+        rod1LengthLabel = QLabel("Rod 1 Length")
+        rod1LengthSlider = Slider(0.01, 5.0, "horizontal")
+        rod1LengthInput = QLineEdit()
+
+        rod2LengthLabel = QLabel("Rod 2 Length")
+        rod2LengthSlider = Slider(0.01, 5.0, "horizontal")
+        rod2LengthInput = QLineEdit()
+
+        mass1LengthLabel = QLabel("Mass 1 Length")
+        mass1LengthSlider = Slider(0.01, 2.0, "horizontal")
+        mass1LengthInput = QLineEdit()
+
+        mass2LengthLabel = QLabel("Mass 2 Length")
+        mass2LengthSlider = Slider(0.01, 2.0, "horizontal")
+        mass2LengthInput = QLineEdit()
+
+        layout = QGridLayout()
+        layout.addWidget(rod1LengthLabel, 0, 0)
+        layout.addWidget(rod1LengthSlider, 0, 1)
+        layout.addWidget(rod1LengthInput, 0, 2)
+
+        layout.addWidget(rod2LengthLabel, 1, 0)
+        layout.addWidget(rod2LengthSlider, 1, 1)
+        layout.addWidget(rod2LengthInput, 1, 2)
+
+        layout.addWidget(mass1LengthLabel, 0, 3)
+        layout.addWidget(mass1LengthSlider, 0, 4)
+        layout.addWidget(mass1LengthInput, 0, 5)
+
+        layout.addWidget(mass2LengthLabel, 1, 3)
+        layout.addWidget(mass2LengthSlider, 1, 4)
+        layout.addWidget(mass2LengthInput, 1, 5)
+
+        Box.setLayout(layout)
+
+        return Box
+    
 
 app = QApplication(sys.argv)
 window = MainWindow()
