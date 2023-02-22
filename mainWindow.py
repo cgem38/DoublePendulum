@@ -10,21 +10,50 @@ from scipy.integrate import odeint, solve_ivp
 import scipy as sp
 import matplotlib.pyplot as plt
 from slider import Slider
-from kivy.properties import Clock
+import time
+import sympy as smp
 
 class MainWindow(QWidget):
     def __init__(self):
         super(MainWindow, self).__init__()
 
-        positionGraph = self.createPositionGraph()
+        self.positionGraph = self.createPositionGraph()
         variableComboBox = self.createVariableComboBox()
 
+
+        runButton = QPushButton("Run")
+        runButton.pressed.connect(self.runButtonPressed)
+        #BEGINNING OF CODE TO TEST GRAPHING FUNCTION -- DELETE WHEN ODE SOLVER IS COMPLETED
+        self.x = np.linspace(0, 10, 1000)
+        self.y = self.x**2
+        #END OF CODE TO TEST GRAPHING FUNCTION
+
         tab1MainLayout = QGridLayout()
-        tab1MainLayout.addWidget(positionGraph, 0, 0, 1, 6)
+        tab1MainLayout.addWidget(self.positionGraph, 0, 0, 1, 6)
         tab1MainLayout.addWidget(variableComboBox, 1, 0, 1, 6)
+        tab1MainLayout.addWidget(runButton, 2, 2, 1, 2)
         tab1MainLayout.setRowStretch(0, 5)
         tab1MainLayout.setRowStretch(1, 1)
+        tab1MainLayout.setRowStretch(2, 1)
         self.setLayout(tab1MainLayout)
+
+        
+    
+    def runButtonPressed(self):
+        self.graphPositions()
+    
+    def graphPositions(self):
+        # startTime = time.time()
+        # timeInterval = 1/60
+        # for i in range(int(len(self.x)/2)):
+        #     currentSpot = 2 * i
+        #     xPoints = [self.x[currentSpot], self.x[currentSpot + 1]]
+        #     yPoints = [self.y[currentSpot], self.y[currentSpot + 1]]
+        #     self.positionGraph.plot(xPoints, yPoints)
+        #     time.sleep(timeInterval) 
+        pass
+
+
 
     def createPositionGraph(self):
         graph = pg.plot()
@@ -73,6 +102,8 @@ class MainWindow(QWidget):
         Box.setLayout(layout)
 
         return Box
+    
+
     
 
 app = QApplication(sys.argv)
