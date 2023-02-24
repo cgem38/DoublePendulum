@@ -16,4 +16,6 @@ class Slider(QSlider):
         self.setMinimum(int(min))
         self.setMaximum(int(max))
 
+if __name__ == "__main__":
+    Slider()
 

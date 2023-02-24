@@ -27,7 +27,7 @@ class MainWindow(QWidget):
         
         #Temporary Variables to test ODE solver and grpahing functions, since the UI does not have input for gravity and time yet. Delete when it does. 
         self.g = 9.81
-        self.t = 10
+        self.t = 40
         #END OF CODE TO TEST GRAPHING FUNCTION
 
         tab1MainLayout = QGridLayout()
@@ -112,7 +112,6 @@ class MainWindow(QWidget):
         self.mass1Input.setText("1")
         self.mass1Slider.setValue(int(100 * float(self.mass1Input.text())))
         self.mass1Slider.valueChanged.connect(self.sliderValuesChanged)
-
 
         mass2Label = QLabel("Mass 2")
         self.mass2Slider = Slider(0.01, 2.0, "horizontal")

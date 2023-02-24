@@ -78,15 +78,33 @@ def Solver(gravity, time, mass1, mass2, length1, length2, theta10, theta20):
     solZ1 = ans.T[1]
     solTheta2 = ans.T[2]
     solZ2 = ans.T[3]
-    solx1 = L1 * np.sin(solTheta1)
-    soly1 = -L1 * np.cos(solTheta1)
-    solx2 = solx1 + L2 * np.sin(solTheta2)
-    soly2 = soly1 + (-L2 * np.cos(solTheta2))
-    # plt.plot(solx1, soly1, label="mass1")
-    # plt.plot(solx2, soly2, label="mass2")
-    # plt.legend()
-    # plt.show()
+    # solx1 = L1 * np.sin(solTheta1)
+    # soly1 = -L1 * np.cos(solTheta1)
+    # solx2 = L1 * np.sin(solTheta1) + L2 * np.sin(solTheta2)
+    # soly2 = -L1 * np.cos(solTheta1) - (L2 * np.cos(solTheta2))
+    
 
+    def getx1y1x2y2(theta1, theta2, L1, L2):
+        return (L1 * np.sin(theta1), 
+                -L1 * np.cos(theta1),
+                L1 * np.sin(theta1) + L2 * np.sin(theta2),
+                -L1 * np.cos(theta1) - L2 * np.cos(theta2))
+
+    solx1, soly1, solx2, soly2 = getx1y1x2y2(solTheta1, solTheta2, L1, L2)
+
+    def animate(i):
+        ln1.set_data([0, solx1[i], solx2[i]], [0, soly1[i], soly2[i]])
+
+    fig, ax = plt.subplots(1,1, figsize = (8,8))
+    ax.set_facecolor('k')
+    ax.get_xaxis().set_ticks([])
+    ax.get_yaxis().set_ticks([])
+    ln1, = plt.plot([], [], 'ro--', lw=3, markersize=8)
+    ax.set_ylim(-4,4)
+    ax.set_xlim(-4,4)
+    ani = animation.FuncAnimation(fig, animate, frames=1000, interval=50)
+    plt.show()
+    # ani.save('pen.gif', writer='pillow', fps=25)
     return ans
 
 if __name__ == "__main__":
