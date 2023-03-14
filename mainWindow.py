@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QVBoxLayout, QSizePolicy
     QHBoxLayout, QTabWidget, QComboBox, QTextEdit)
 from PyQt5.QtCore import Qt
 from PyQt5 import QtWidgets, QtGui, QtCore
+from PyQt5.QtGui import QMovie
 import pyqtgraph as pg
 import numpy as np
 import sys
@@ -11,16 +12,18 @@ import scipy as sp
 import matplotlib.pyplot as plt
 from slider import Slider
 from doublePendulumSolver import Solver
-import sympy as smp
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
+import matplotlib.pyplot as plt
+from matplotlib import animation 
+from animationWidget import animatePendulum
 
 class MainWindow(QWidget):
     def __init__(self):
         super(MainWindow, self).__init__()
 
-        self.positionGraph = self.createGraphWidget()
+        self.GraphBox = self.createGraphBox()
         variableComboBox = self.createVariableGroupBox()
         initialConditionsComboBox = self.createInitialConditionsGroupBox()
-
 
         runButton = QPushButton("Run")
         runButton.pressed.connect(self.runButtonPressed)
@@ -31,7 +34,7 @@ class MainWindow(QWidget):
         #END OF CODE TO TEST GRAPHING FUNCTION
 
         tab1MainLayout = QGridLayout()
-        tab1MainLayout.addWidget(self.positionGraph, 0, 0, 1, 6)
+        tab1MainLayout.addWidget(self.GraphBox, 0, 0, 1, 6)
         tab1MainLayout.addWidget(variableComboBox, 1, 0, 1, 6)
         tab1MainLayout.addWidget(initialConditionsComboBox, 2, 0, 1, 6)
         tab1MainLayout.addWidget(runButton, 3, 2, 1, 2)
@@ -50,10 +53,17 @@ class MainWindow(QWidget):
         L1 = float(self.rod1LengthInput.text())
         L2 = float(self.rod2LengthInput.text())
         theta10 = float(self.theta1InitialInput.text())
-        theta20 = float(self.theta2InitialInput.text())
+        theta20 = float(self.theta2InitialInput.text()) 
+
         output = Solver(g, t, m1, m2, L1, L2, theta10, theta20)
         self.graphPositions(output)
+        animatePendulum(output, L1, L2)
+        animationOutput = QMovie("animation.gif")
+        self.animationLabel.setMovie(animationOutput)
+        animationOutput.start()
+
         return output
+    
     
     def graphPositions(self, solverOutput):
         Theta1 = solverOutput.T[0]
@@ -76,7 +86,13 @@ class MainWindow(QWidget):
 
         pass
 
-    def createGraphWidget(self, output=[]):
+    def createGraphBox(self, output=[]):
+        tabWidget = QTabWidget()
+        graphTab = QWidget()
+        self.animationTab = QWidget()
+        
+        #Create Graph Tab
+        graphLayout = QGridLayout()
         x = []
         y = []
         XYgraph = pg.plot()
@@ -86,8 +102,18 @@ class MainWindow(QWidget):
         XYgraph.addLegend(offset=(-1, 1))
         self.XYLine1 = XYgraph.plot(x, y, pen='r', name="Mass 1")
         self.XYLine2 = XYgraph.plot(x, y, pen='b', name="Mass 2")
-        
-        return XYgraph
+        graphLayout.addWidget(XYgraph)
+        graphTab.setLayout(graphLayout)
+        tabWidget.addTab(graphTab, "Graph")
+
+        #Create Animation Tab
+        self.animationLabel = QLabel()
+        self.animationLayout = QGridLayout()
+        self.animationLayout.addWidget(self.animationLabel)
+        self.animationTab.setLayout(self.animationLayout)
+        tabWidget.addTab(self.animationTab, "Animation")
+
+        return tabWidget
     
     def createVariableGroupBox(self):
         Box = QGroupBox(title="Variables")
@@ -193,7 +219,8 @@ class MainWindow(QWidget):
         self.theta1InitialSlider.setValue(int(100 * float(self.theta1InitialInput.text())))
         self.theta2InitialSlider.setValue(int(100 * float(self.theta2InitialInput.text())))
 
-app = QApplication(sys.argv)
-window = MainWindow()
-window.show()
-sys.exit(app.exec_())
+if __name__=="__main__":
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    sys.exit(app.exec_())
